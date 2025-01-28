@@ -1,10 +1,12 @@
-
+import Link from "next/link";
 
 export default function StudentInfo() {
     return (
       <main>
-        <h1>Noah Gallasic</h1>
-        <link href="https://github.com/ChronicCoffee">Personal Github Page</link>
+        <p>Noah Gallasic</p>
+        <Link href="https://github.com/ChronicCoffee">
+          Personal Github Page
+        </Link>
       </main>
     );
-  }
+}
