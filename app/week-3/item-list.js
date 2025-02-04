@@ -1,5 +1,5 @@
-import React from 'react';
-import Item from './item.js';
+import React from "react";
+import Item from "./item.js";
 
 const items = [
   { name: "milk, 4 L 🥛", quantity: 1, category: "dairy" },
@@ -13,7 +13,7 @@ const items = [
   { name: "toilet paper, 12 pack 🧻", quantity: 1, category: "household" },
   { name: "paper towels, 6 pack", quantity: 1, category: "household" },
   { name: "dish soap 🍽️", quantity: 1, category: "household" },
-  { name: "hand soap 🧼", quantity: 4, category: "household" }
+  { name: "hand soap 🧼", quantity: 4, category: "household" },
 ];
 
 const ItemList = () => {
