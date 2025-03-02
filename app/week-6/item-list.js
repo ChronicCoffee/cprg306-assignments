@@ -1,140 +1,124 @@
-import Item from "./item.js";
+"use client";
 
-const item1 = {
-  name: "milk, 4 L 🥛",
-  quantity: 1,
-  category: "dairy",
-};
-
-const item2 = {
-  name: "bread 🍞",
-  quantity: 2,
-  category: "bakery",
-};
-
-const item3 = {
-  name: "eggs, dozen 🥚",
-  quantity: 2,
-  category: "dairy",
-};
-
-const item4 = {
-  name: "bananas 🍌",
-  quantity: 6,
-  category: "produce",
-};
-
-const item5 = {
-  name: "broccoli 🥦",
-  quantity: 3,
-  category: "produce",
-};
-
-const item6 = {
-  name: "chicken breasts, 1 kg 🍗",
-  quantity: 1,
-  category: "meat",
-};
-
-const item7 = {
-  name: "pasta sauce 🍝",
-  quantity: 3,
-  category: "canned goods",
-};
-
-const item8 = {
-  name: "spaghetti, 454 g 🍝",
-  quantity: 2,
-  category: "dry goods",
-};
-
-const item9 = {
-  name: "toilet paper, 12 pack 🧻",
-  quantity: 1,
-  category: "household",
-};
-
-const item10 = {
-  name: "paper towels, 6 pack",
-  quantity: 1,
-  category: "household",
-};
-
-const item11 = {
-  name: "dish soap 🍽️",
-  quantity: 1,
-  category: "household",
-};
-
-const item12 = {
-  name: "hand soap 🧼",
-  quantity: 4,
-  category: "household",
-};
+import { useState } from "react";
+import Item from "./item";
+import items from "./items.json";
 
 export default function ItemList() {
+  const [sortBy, setSortBy] = useState("name");
+  const [groupByCategory, setGroupByCategory] = useState(false);
+
+  // Sort the items based on the sortBy state
+  const sortedItems = [...items].sort((a, b) => {
+    if (sortBy === "name") {
+      return a.name.localeCompare(b.name);
+    }
+    if (sortBy === "category") {
+      return a.category.localeCompare(b.category);
+    }
+    return 0;
+  });
+
+  // Group the items by category
+  const groupedItems = sortedItems.reduce((groups, item) => {
+    const category = item.category;
+    if (!groups[category]) {
+      groups[category] = [];
+    }
+    groups[category].push(item);
+    return groups;
+  }, {});
+
+  // Convert grouped items to an array and sort by category name
+  const groupedItemsArray = Object.keys(groupedItems)
+    .sort()
+    .map((category) => ({
+      category,
+      items: groupedItems[category].sort((a, b) => a.name.localeCompare(b.name)),
+    }));
+
   return (
-    <div className="space-y-2">
-      <Item
-        name={item1.name}
-        quantity={item1.quantity}
-        category={item1.category}
-      />
-      <Item
-        name={item2.name}
-        quantity={item2.quantity}
-        category={item2.category}
-      />
-      <Item
-        name={item3.name}
-        quantity={item3.quantity}
-        category={item3.category}
-      />
-      <Item
-        name={item4.name}
-        quantity={item4.quantity}
-        category={item4.category}
-      />
-      <Item
-        name={item5.name}
-        quantity={item5.quantity}
-        category={item5.category}
-      />
-      <Item
-        name={item6.name}
-        quantity={item6.quantity}
-        category={item6.category}
-      />
-      <Item
-        name={item7.name}
-        quantity={item7.quantity}
-        category={item7.category}
-      />
-      <Item
-        name={item8.name}
-        quantity={item8.quantity}
-        category={item8.category}
-      />
-      <Item
-        name={item9.name}
-        quantity={item9.quantity}
-        category={item9.category}
-      />
-      <Item
-        name={item10.name}
-        quantity={item10.quantity}
-        category={item10.category}
-      />
-      <Item
-        name={item11.name}
-        quantity={item11.quantity}
-        category={item11.category}
-      ></Item>
-      <Item
-        name={item12.name}
-        quantity={item12.quantity}
-        category={item12.category}
-      />
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3 bg-indigo-950/50 p-4 rounded-lg backdrop-blur-sm shadow-lg mb-6 border border-indigo-900/50">
+        <h2 className="text-indigo-300 text-sm w-full mb-2">Sort Options:</h2>
+        <button
+          onClick={() => {
+            setSortBy("name");
+            setGroupByCategory(false);
+          }}
+          className={`px-4 py-2 transition-all duration-200 ${
+            sortBy === "name" && !groupByCategory
+              ? "bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700" 
+              : "bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white"
+          }`}
+        >
+          By Name
+        </button>
+        <button
+          onClick={() => {
+            setSortBy("category");
+            setGroupByCategory(false);
+          }}
+          className={`px-4 py-2 transition-all duration-200 ${
+            sortBy === "category" && !groupByCategory
+              ? "bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700" 
+              : "bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white"
+          }`}
+        >
+          By Category
+        </button>
+        <button
+          onClick={() => setGroupByCategory(true)}
+          className={`px-4 py-2 transition-all duration-200 ${
+            groupByCategory
+              ? "bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700" 
+              : "bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white"
+          }`}
+        >
+          Group by Category
+        </button>
+      </div>
+
+      {groupByCategory ? (
+        <div className="space-y-8">
+          {groupedItemsArray.map((group) => (
+            <div key={group.category} className="bg-indigo-950/30 rounded-lg p-4 backdrop-blur-sm shadow-lg border-l-4 border-l-indigo-600 border-t border-r border-b border-indigo-900/40">
+              <h2 className="text-lg font-bold capitalize mb-4 text-white flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-indigo-400"></div>
+                {group.category}
+                <span className="text-indigo-400 text-xs font-normal ml-2">
+                  ({group.items.length} {group.items.length === 1 ? "item" : "items"})
+                </span>
+              </h2>
+              <div className="space-y-2 pl-2">
+                {group.items.map((item) => (
+                  <Item
+                    key={item.id}
+                    name={item.name}
+                    quantity={item.quantity}
+                    category={item.category}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {sortedItems.map((item) => (
+            <Item
+              key={item.id}
+              name={item.name}
+              quantity={item.quantity}
+              category={item.category}
+            />
+          ))}
+        </div>
+      )}
+      
+      <div className="text-xs text-indigo-400/60 mt-8 pt-2 border-t border-indigo-900/40">
+        Displaying {sortedItems.length} items • {groupByCategory ? "Grouped by category" : `Sorted by ${sortBy}`}
+      </div>
     </div>
   );
 }

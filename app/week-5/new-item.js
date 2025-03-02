@@ -1,4 +1,3 @@
-// /app/week-5/new-item.js
 "use client";
 
 import { useState } from 'react';
