@@ -1,4 +1,4 @@
-const Item = ({ name, quantity, category }) => {
+const Item = ({ name, quantity, category, onSelect }) => {
   const getCategoryStyle = (category) => {
     const styles = {
       dairy: "border-l-sky-300",
@@ -18,7 +18,8 @@ const Item = ({ name, quantity, category }) => {
                        hover:translate-x-2 border-l-4 ${getCategoryStyle(
                          category
                        )}
-                       backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25`}
+                       backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer`}
+      onClick={() => onSelect && onSelect()}
     >
       <div className="p-3">
         {" "}
