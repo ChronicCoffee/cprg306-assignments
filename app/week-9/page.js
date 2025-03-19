@@ -8,6 +8,32 @@ export default function Page() {
   const { user, gitHubSignIn, firebaseSignOut } = useUserAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [greeting, setGreeting] = useState("");
+  const [greetingEmoji, setGreetingEmoji] = useState("");
+
+  useEffect(() => {
+    // Set greeting based on time of day
+    const hour = new Date().getHours();
+    let timeGreeting = "";
+    let emoji = "";
+    
+    if (hour >= 5 && hour < 12) {
+      timeGreeting = "Good morning";
+      emoji = "☀️";
+    } else if (hour >= 12 && hour < 17) {
+      timeGreeting = "Good afternoon";
+      emoji = "🌤️";
+    } else if (hour >= 17 && hour < 22) {
+      timeGreeting = "Good evening";
+      emoji = "🌙";
+    } else {
+      timeGreeting = "Good night";
+      emoji = "✨";
+    }
+    
+    setGreeting(timeGreeting);
+    setGreetingEmoji(emoji);
+  }, []);
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -36,18 +62,33 @@ export default function Page() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-black p-4">
-      <div className="max-w-md mx-auto mt-20 bg-indigo-950/60 rounded-lg backdrop-blur-sm shadow-lg border border-indigo-900/50 p-8">
-        <h1 className="text-3xl font-bold text-white mb-6">
-          Shopping List App
-        </h1>
+    <main className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-black p-4 flex items-center justify-center">
+      <div className="max-w-md w-full bg-indigo-950/60 rounded-xl backdrop-blur-sm shadow-xl border border-indigo-900/50 p-8 transform transition-all hover:shadow-indigo-700/20 hover:shadow-lg">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              Shopping List
+            </h1>
+            <div className="h-1 w-16 bg-gradient-to-r from-indigo-400 to-purple-500 rounded-full mt-2"></div>
+          </div>
+          <div className="text-4xl">{greetingEmoji}</div>
+        </div>
+        
+        <div className="bg-gradient-to-r from-indigo-800/30 to-purple-800/30 p-4 rounded-lg border border-indigo-700/30 mb-6">
+          <p className="text-indigo-200 font-medium">
+            {greeting}! <span className="text-white">Welcome to your personal shopping assistant.</span>
+          </p>
+        </div>
 
         {user ? (
           <div className="space-y-6">
-            <div className="bg-indigo-900/40 p-4 rounded-lg border border-indigo-800/50">
-              <p className="text-indigo-100 mb-1">Signed in as:</p>
+            <div className="bg-indigo-900/40 p-4 rounded-lg border border-indigo-800/50 transform transition-all hover:scale-[1.01]">
+              <p className="text-indigo-100 mb-1 flex items-center">
+                <span className="mr-2">👤</span>
+                Signed in as:
+              </p>
               <p className="text-white font-medium">
-                {user.displayName || "User"}
+                <span className="font-bold">{user.displayName || "User"}</span>
                 <span className="text-indigo-300 text-sm ml-2">
                   ({user.email})
                 </span>
@@ -57,7 +98,7 @@ export default function Page() {
             <div className="space-y-3">
               <Link
                 href="/week-9/shopping-list"
-                className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center"
+                className="w-full px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-md hover:from-indigo-500 hover:to-indigo-600 flex items-center justify-center font-medium transition-all shadow-md hover:shadow-lg"
               >
                 <span className="mr-2">📝</span>
                 Go to Shopping List
@@ -66,7 +107,7 @@ export default function Page() {
               <button
                 onClick={handleSignOut}
                 disabled={loading}
-                className="w-full px-4 py-2 bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white disabled:opacity-50"
+                className="w-full px-4 py-3 bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white disabled:opacity-50 transition-colors"
               >
                 {loading ? "Signing out..." : "Sign Out"}
               </button>
@@ -74,7 +115,7 @@ export default function Page() {
           </div>
         ) : (
           <div className="space-y-6">
-            <p className="text-indigo-300">
+            <p className="text-indigo-300 text-center">
               Please sign in with your GitHub account to access the shopping
               list app.
             </p>
@@ -82,7 +123,7 @@ export default function Page() {
             <button
               onClick={handleSignIn}
               disabled={loading}
-              className="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center justify-center"
+              className="w-full px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-md hover:from-indigo-500 hover:to-indigo-600 flex items-center justify-center font-medium transition-all shadow-md hover:shadow-lg"
             >
               <svg
                 className="w-5 h-5 mr-2"
@@ -97,9 +138,23 @@ export default function Page() {
 
             {error && (
               <div className="text-red-400 text-sm bg-red-900/20 p-3 rounded-md border border-red-900/50">
-                Error: {error}
+                <div className="flex items-center mb-1">
+                  <span className="mr-2">⚠️</span>
+                  <span className="font-medium">Sign-in Error</span>
+                </div>
+                <p>{error}</p>
               </div>
             )}
+            
+            <div className="pt-4">
+              <div className="h-px w-full bg-indigo-800/30"></div>
+              <p className="text-indigo-400 text-sm text-center mt-4">Organize your shopping with ease</p>
+              <div className="flex justify-center gap-3 mt-3">
+                <span className="text-indigo-300">🛒</span>
+                <span className="text-indigo-300">📋</span>
+                <span className="text-indigo-300">🔍</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

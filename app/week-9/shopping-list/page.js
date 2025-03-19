@@ -78,7 +78,7 @@ export default function Page() {
         <div className="flex flex-col items-end gap-2">
           <div className="text-right">
             <p className="text-indigo-300 text-sm">
-              Signed in as <span className="text-white">{user.displayName || user.email}</span>
+              Signed in as <span className="text-white font-bold">{user.displayName || user.email}</span>
             </p>
           </div>
           <div className="flex gap-2">
