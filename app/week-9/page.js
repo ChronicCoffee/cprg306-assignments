@@ -15,7 +15,7 @@ export default function Page() {
     try {
       await gitHubSignIn();
       // Optional: Redirect to shopping list page after successful login
-      // window.location.href = '/week-9/shopping-list';
+      window.location.href = '/week-9/shopping-list';
     } catch (err) {
       setError(err.message);
       console.error(err);
