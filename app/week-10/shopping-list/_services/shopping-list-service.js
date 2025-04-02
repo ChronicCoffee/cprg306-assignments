@@ -1,4 +1,4 @@
-import { db } from "../_utils/firebase";
+import { db } from "../../_utils/firebase";
 import { collection, getDocs, addDoc, query, where, doc, deleteDoc } from "firebase/firestore";
 
 export async function getItems(userId) {
