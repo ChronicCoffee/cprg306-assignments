@@ -4,33 +4,54 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUserAuth } from "../_utils/auth-context";
+import { getItems, addItem, deleteItem } from "./_services/shopping-list-service";
 import NewItem from './new-item';
 import ItemList from './item-list';
 import MealIdeas from './meal-ideas';
-import itemsData from './items.json';
 
 export default function Page() {
   const { user, firebaseSignOut } = useUserAuth();
   const router = useRouter();
-  const [items, setItems] = useState(itemsData);
+  const [items, setItems] = useState([]);
   const [selectedItemName, setSelectedItemName] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Check if user is authenticated
   useEffect(() => {
-    // Short delay to prevent flash of unauthorized content
     const timer = setTimeout(() => {
       setLoading(false);
       if (!user) {
-        router.push('/week-9');
+        router.push('/week-10');
       }
     }, 300);
     
     return () => clearTimeout(timer);
   }, [user, router]);
 
-  const handleAddItem = (newItem) => {
-    setItems([...items, newItem]);
+  // Load items from Firestore when user changes
+  useEffect(() => {
+    if (user) {
+      loadItems();
+    }
+  }, [user]);
+
+  const loadItems = async () => {
+    try {
+      const fetchedItems = await getItems(user.uid);
+      setItems(fetchedItems);
+    } catch (error) {
+      console.error("Error loading items:", error);
+    }
+  };
+
+  const handleAddItem = async (newItem) => {
+    try {
+      const itemId = await addItem(user.uid, newItem);
+      if (itemId) {
+        setItems([...items, { ...newItem, id: itemId }]);
+      }
+    } catch (error) {
+      console.error("Error adding item:", error);
+    }
   };
   
   const handleItemSelect = (item) => {
@@ -38,16 +59,27 @@ export default function Page() {
     setSelectedItemName(cleanName);
   };
 
+  // Optional Challenge: Handle item deletion
+  const handleDeleteItem = async (itemId) => {
+    try {
+      const success = await deleteItem(user.uid, itemId);
+      if (success) {
+        setItems(items.filter(item => item.id !== itemId));
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await firebaseSignOut();
-      router.push('/week-9');
+      router.push('/week-10');
     } catch (err) {
       console.error(err);
     }
   };
 
-  // Show loading state
   if (loading) {
     return (
       <main className="min-h-screen bg-gradient-to-br from-black via-indigo-950 to-black p-4 flex items-center justify-center">
@@ -56,9 +88,8 @@ export default function Page() {
     );
   }
 
-  // Redirect if not authenticated
   if (!user) {
-    return null; // Will be redirected by the useEffect
+    return null;
   }
 
   return (
@@ -83,7 +114,7 @@ export default function Page() {
           </div>
           <div className="flex gap-2">
             <Link 
-              href="/week-9" 
+              href="/week-10" 
               className="px-3 py-1 text-sm bg-indigo-950/80 text-indigo-300 rounded-md border border-indigo-800/50 hover:bg-indigo-900/80 hover:text-white"
             >
               Back to Home
@@ -101,7 +132,11 @@ export default function Page() {
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-6">
           <NewItem onAddItem={handleAddItem} />
-          <ItemList items={items} onItemSelect={handleItemSelect} />
+          <ItemList 
+            items={items} 
+            onItemSelect={handleItemSelect} 
+            onDeleteItem={handleDeleteItem} // Optional Challenge
+          />
         </div>
         
         <div>

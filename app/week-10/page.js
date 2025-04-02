@@ -41,7 +41,7 @@ export default function Page() {
     try {
       await gitHubSignIn();
       // Optional: Redirect to shopping list page after successful login
-      window.location.href = '/week-9/shopping-list';
+      window.location.href = '/week-10/shopping-list';
     } catch (err) {
       setError(err.message);
       console.error(err);
@@ -97,7 +97,7 @@ export default function Page() {
 
             <div className="space-y-3">
               <Link
-                href="/week-9/shopping-list"
+                href="/week-10/shopping-list"
                 className="w-full px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-md hover:from-indigo-500 hover:to-indigo-600 flex items-center justify-center font-medium transition-all shadow-md hover:shadow-lg"
               >
                 <span className="mr-2">📝</span>
